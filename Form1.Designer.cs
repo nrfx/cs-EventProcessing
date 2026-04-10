@@ -55,6 +55,7 @@
             // 
             txtLog.Location = new Point(905, 12);
             txtLog.Name = "txtLog";
+            txtLog.ReadOnly = true;
             txtLog.Size = new Size(408, 614);
             txtLog.TabIndex = 1;
             txtLog.Text = "";
