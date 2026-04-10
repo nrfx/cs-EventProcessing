@@ -12,8 +12,8 @@ namespace EventProcessing.Objects
 
         public override void Render(Graphics g)
         {
-            g.FillRectangle(new SolidBrush(Color.Yellow), 200, 100, 50, 30);
-            g.DrawRectangle(new Pen(Color.Red, 2), 200, 100, 50, 30);
+            g.FillRectangle(new SolidBrush(Color.Yellow), -25, -15, 50, 30);
+            g.DrawRectangle(new Pen(Color.Red, 2), -25, -15, 50, 30);
         }
     }
 }

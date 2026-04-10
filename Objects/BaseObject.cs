@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing.Drawing2D;
 
 namespace EventProcessing.Objects
 {
@@ -15,6 +16,15 @@ namespace EventProcessing.Objects
             X = x;
             Y = y;
             Angle = angle;
+        }
+
+        public Matrix GetTransform()
+        {
+            var matrix = new Matrix();
+            matrix.Translate(X, Y);
+            matrix.Rotate(Angle);
+
+            return matrix;
         }
 
         public virtual void Render(Graphics g)
