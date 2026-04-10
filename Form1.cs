@@ -12,6 +12,15 @@ namespace EventProcessing
         {
             InitializeComponent();
             player = new Player(pbMain.Width / 2, pbMain.Height / 2, 0);
+            player.OnOverlap += (p, obj) =>
+            {
+                txtLog.Text = $"[{DateTime.Now:HH:mm:ss:ff}] Игрок пересекся с {obj}\n" + txtLog.Text;
+            };
+            player.OnMarkerOverlap += (m) =>
+            {
+                objects.Remove(m);
+                marker = null;
+            };
             marker = new Marker(pbMain.Width / 2 + 50, pbMain.Height / 2 + 50, 0);
 
             objects.Add(marker);
@@ -26,21 +35,17 @@ namespace EventProcessing
             var g = e.Graphics;
             g.Clear(Color.White);
 
-            foreach (var obj in objects.ToList())
+            foreach (var obj in objects.ToList())    // пересчитываем пересечения
             {
                 // проверка на пересечение с игроком
                 if (obj != player && player.Overlaps(obj, g))
                 {
-                    txtLog.Text = $"[{DateTime.Now:HH:mm:ss:ff}] Игрок пересекся с {obj}\n" + txtLog.Text;
-
-                    if (obj == marker)
-                    {
-                        // если достиг, то удаляю маркер из оригинального objects
-                        objects.Remove(marker);
-                        marker = null; // и обнуляю маркер
-                    }
+                    player.Overlap(obj); // то есть игрок пересекся с объектом
+                    obj.Overlap(player); // и объект пересекся с игроком
                 }
-
+            }
+            foreach (var obj in objects)     // рендерим объекты
+            {
                 g.Transform = obj.GetTransform();
                 obj.Render(g);
             }
