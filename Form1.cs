@@ -8,6 +8,8 @@ namespace EventProcessing
         List<BaseObject> objects = new();
         Player player;
         Marker marker;
+        GreenCircle greenCircle;
+        Random rand = new Random();
         public Form1()
         {
             InitializeComponent();
@@ -21,10 +23,18 @@ namespace EventProcessing
                 objects.Remove(m);
                 marker = null;
             };
+            player.OnGreenCircleOverlap += (gc) =>
+            {
+                greenCircle.X = rand.Next(0, pbMain.Width);
+                greenCircle.Y = rand.Next(0, pbMain.Height);
+            };
             marker = new Marker(pbMain.Width / 2 + 50, pbMain.Height / 2 + 50, 0);
+
+            greenCircle = new GreenCircle(pbMain.Width / 2 - 100, pbMain.Height / 2 - 100, 0);
 
             objects.Add(marker);
             objects.Add(player);
+            objects.Add(greenCircle);
 
             objects.Add(new MyRectangle(50, 50, 0));
             objects.Add(new MyRectangle(100, 100, 0));
