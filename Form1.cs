@@ -8,8 +8,9 @@ namespace EventProcessing
         List<BaseObject> objects = new();
         Player player;
         Marker marker;
-        GreenCircle greenCircle;
+        List<GreenCircle> greenCircle = new();
         Random rand = new Random();
+        int score = 0;
         public Form1()
         {
             InitializeComponent();
@@ -25,16 +26,21 @@ namespace EventProcessing
             };
             player.OnGreenCircleOverlap += (gc) =>
             {
-                greenCircle.X = rand.Next(0, pbMain.Width);
-                greenCircle.Y = rand.Next(0, pbMain.Height);
+                score++;
+                gc.X = rand.Next(0, pbMain.Width);
+                gc.Y = rand.Next(0, pbMain.Height);
             };
             marker = new Marker(pbMain.Width / 2 + 50, pbMain.Height / 2 + 50, 0);
 
-            greenCircle = new GreenCircle(pbMain.Width / 2 - 100, pbMain.Height / 2 - 100, 0);
+            for (int i = 0; i < 2; i++)  //2 круга
+            {
+                var gc = new GreenCircle(rand.Next(0, pbMain.Width), rand.Next(0, pbMain.Height), 0);
+                greenCircle.Add(gc);
+                objects.Add(gc);
+            }
 
             objects.Add(marker);
             objects.Add(player);
-            objects.Add(greenCircle);
 
             objects.Add(new MyRectangle(50, 50, 0));
             objects.Add(new MyRectangle(100, 100, 0));
@@ -60,6 +66,9 @@ namespace EventProcessing
                 g.Transform = obj.GetTransform();
                 obj.Render(g);
             }
+            g.ResetTransform();  // сбросить трансформацию матрицы
+            g.FillRectangle(new SolidBrush(Color.LightGray), 745, 5, 85, 35);
+            g.DrawString($"Очки: {score}", new Font("Calibri", 12), Brushes.Black, 750, 10);
         }
 
         private void updatePlayer()
