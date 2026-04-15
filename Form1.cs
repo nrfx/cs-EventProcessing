@@ -8,7 +8,6 @@ namespace EventProcessing
         List<BaseObject> objects = new();
         Player player;
         Marker marker;
-        List<GreenCircle> greenCircle = new();
         Random rand = new Random();
         int score = 0;
         public Form1()
@@ -27,16 +26,14 @@ namespace EventProcessing
             player.OnGreenCircleOverlap += (gc) =>
             {
                 score++;
-                gc.X = rand.Next(0, pbMain.Width);
-                gc.Y = rand.Next(0, pbMain.Height);
+                objects.Remove(gc);
+                CreateGreenCircle();
             };
             marker = new Marker(pbMain.Width / 2 + 50, pbMain.Height / 2 + 50, 0);
 
             for (int i = 0; i < 2; i++)  //2 круга
             {
-                var gc = new GreenCircle(rand.Next(0, pbMain.Width), rand.Next(0, pbMain.Height), 0);
-                greenCircle.Add(gc);
-                objects.Add(gc);
+                CreateGreenCircle();
             }
 
             objects.Add(marker);
@@ -52,9 +49,9 @@ namespace EventProcessing
             g.Clear(Color.White);
             updatePlayer();
 
-            foreach (var obj in objects.ToList())    // пересчитываем пересечения
+            foreach (var obj in objects.ToList())
             {
-                // проверка на пересечение с игроком
+      
                 if (obj != player && player.Overlaps(obj, g))
                 {
                     player.Overlap(obj); // то есть игрок пересекся с объектом
@@ -66,9 +63,23 @@ namespace EventProcessing
                 g.Transform = obj.GetTransform();
                 obj.Render(g);
             }
-            g.ResetTransform();  // сбросить трансформацию матрицы
+            g.ResetTransform();
             g.FillRectangle(new SolidBrush(Color.LightGray), 745, 5, 85, 35);
             g.DrawString($"Очки: {score}", new Font("Calibri", 12), Brushes.Black, 750, 10);
+        }
+
+        private void CreateGreenCircle()
+        {
+            var gc = new GreenCircle(rand.Next(0, pbMain.Width), rand.Next(0, pbMain.Height), 0);
+
+            gc.OnSizeZero += (circle) =>
+            {
+                objects.Remove(circle);
+
+                CreateGreenCircle();
+            };
+
+            objects.Add(gc);
         }
 
         private void updatePlayer()
@@ -82,8 +93,8 @@ namespace EventProcessing
                 dx /= length;
                 dy /= length;
 
-                player.vX += dx * 0.5f;
-                player.vY += dy * 0.5f;
+                player.vX += dx * 1.5f;
+                player.vY += dy * 1.5f;
 
                 player.Angle = 90 - MathF.Atan2(player.vX, player.vY) * 180 / MathF.PI; // угол поворота игрока 
             }
@@ -105,7 +116,7 @@ namespace EventProcessing
             if (marker == null)
             {
                 marker = new Marker(0, 0, 0);
-                objects.Add(marker); // и главное не забыть пололжить в objects
+                objects.Add(marker);
             }
 
             marker.X = e.X;
